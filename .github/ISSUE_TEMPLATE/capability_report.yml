@@ -1,0 +1,31 @@
+name: Capability report
+description: Share capability codes discovered on your hood
+labels: [capability-codes]
+body:
+  - type: input
+    id: hood-model
+    attributes:
+      label: Hood model and dataModelIdx
+      placeholder: "Elica XYZ / dataModelIdx 8"
+    validations:
+      required: true
+  - type: textarea
+    id: codes
+    attributes:
+      label: Discovered codes
+      placeholder: |
+        Air quality: code 111, values 1-5 (1=good)
+        AUTO: cap 64 = 2
+        Light color: code 97, 0-100 (0=warm)
+    validations:
+      required: true
+  - type: dropdown
+    id: method
+    attributes:
+      label: How did you verify them?
+      options:
+        - Diagnostics diff (DISCOVERY.md method 1)
+        - mitmproxy capture (DISCOVERY.md method 2)
+        - Both
+    validations:
+      required: true

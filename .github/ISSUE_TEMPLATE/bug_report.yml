@@ -1,0 +1,40 @@
+name: Bug report
+description: Something is not working
+labels: [bug]
+body:
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.7.0"
+    validations:
+      required: true
+  - type: input
+    id: integration-version
+    attributes:
+      label: Elica Connect Plus version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: hood-model
+    attributes:
+      label: Hood model / dataModelIdx
+      placeholder: "Cappa Connect / dataModelIdx 8"
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines
+      description: Logger `custom_components.elica_connect_plus`. Redact serials/emails.
+      render: text
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics download (already redacted by the integration)
+      description: Settings → Devices & services → Elica Connect Plus → ⋮ → Download diagnostics

@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elica Connect Konto",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        }
+      },
+      "select_device": {
+        "title": "Dunstabzugshaube auswählen",
+        "data": {
+          "device_id": "Gerät"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Elica Connect erneut authentifizieren",
+        "description": "Ihre Elica-Connect-Zugangsdaten sind nicht mehr gültig. Bitte erneut eingeben.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "E-Mail oder Passwort ungültig",
+      "cannot_connect": "Verbindung zur Elica-Cloud nicht möglich",
+      "no_devices": "Keine Geräte in diesem Konto gefunden",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "abort": {
+      "already_configured": "Diese Haube ist bereits konfiguriert",
+      "reauth_successful": "Erneute Authentifizierung erfolgreich"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Erweiterte Capability-Codes",
+        "description": "Jede Funktion unten ist standardmäßig deaktiviert (0), da die Capability-Codes je nach Modell variieren. Geben Sie den auf Ihrer Haube ermittelten Code ein (siehe DISCOVERY.md), um eine Funktion zu aktivieren; setzen Sie ihn auf 0 zurück, um sie zu entfernen.",
+        "data": {
+          "cap_air_quality": "Capability-Code Luftqualitätssensor",
+          "fan_auto_value": "Lüftermodus-Wert für AUTO (Capability 64)",
+          "cap_light_color": "Capability-Code Lichtfarbe",
+          "cap_ambient_brightness": "Capability-Code Helligkeit Ambientelicht",
+          "cap_ambient_color": "Capability-Code Farbe Ambientelicht",
+          "keepalive_minutes": "Keep-Alive-Intervall (Minuten)",
+          "aggressive_keepalive": "Aggressives Keep-Alive (No-Op-Befehl senden)",
+          "cap_timer": "Capability-Code Abschalt-Timer",
+          "mqtt_host": "MQTT-Broker-Host",
+          "mqtt_port": "MQTT-Broker-Port"
+        },
+        "data_description": {
+          "cap_air_quality": "0 = kein Luftqualitätssensor. Code 112 bei Elica Illusion (dataModelIdx 8).",
+          "fan_auto_value": "0 = kein Auto-Preset. Wert 16 bei Elica Illusion (dataModelIdx 8).",
+          "cap_light_color": "0 = Hauptlicht ohne Farbsteuerung. Code 97 bei Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_brightness": "0 = Ihre Haube hat kein Ambientelicht, die Entität wird nicht erstellt. Code 100 bei Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_color": "0 = Ambientelicht nur dimmbar (z. B. Elica Illusion). Nur setzen, wenn das Ambientelicht in der App einen Warm/Kalt-Regler hat.",
+          "keepalive_minutes": "Wie oft die Elica-Cloud abgefragt wird, während MQTT-Push aktiv ist. Standard 5. Verringern (1-2), wenn die Haube wegen Energiesparfunktionen die WLAN-Verbindung verliert; erhöhen, um Cloud-Datenverkehr zu reduzieren.",
+          "aggressive_keepalive": "Sendet bei jedem Keep-Alive-Zyklus zusätzlich einen harmlosen Befehl (Echo der aktuellen Lichthelligkeit), der die Haube selbst zwingt, aufzuwachen und über MQTT zu bestätigen. Nur aktivieren, wenn die Haube trotz kurzem Abfrageintervall die WLAN-Verbindung verliert.",
+          "cap_timer": "0 = kein Timer. Code 432 bei Elica Illusion (dataModelIdx 8).",
+          "mqtt_host": "Elica-Cloud-MQTT-Broker. Nur ändern, wenn Elica ihn verschiebt; Standard cloudprodmqtt.elica.com.",
+          "mqtt_port": "Standard 8883 (TLS)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "fan": {
+      "fan": {
+        "name": "Lüfter",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "auto": "Auto",
+              "low": "Niedrig",
+              "medium": "Mittel",
+              "high": "Hoch",
+              "boost": "Boost"
+            }
+          }
+        }
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Licht",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "very_warm": "Sehr warm",
+              "warm": "Warm",
+              "neutral": "Neutral",
+              "cool": "Kalt",
+              "very_cool": "Sehr kalt"
+            }
+          }
+        }
+      },
+      "ambient_light": {
+        "name": "Ambientelicht"
+      }
+    },
+    "sensor": {
+      "filter": {
+        "name": "Filter"
+      },
+      "air_quality": {
+        "name": "Luftqualität",
+        "state": {
+          "excellent": "Ausgezeichnet",
+          "good": "Gut",
+          "fair": "Mäßig",
+          "poor": "Schlecht",
+          "very_poor": "Sehr schlecht"
+        }
+      }
+    },
+    "number": {
+      "timer": {
+        "name": "Timer"
+      }
+    }
+  }
+}

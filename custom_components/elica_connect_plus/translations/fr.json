@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Compte Elica Connect",
+        "data": {
+          "email": "E-mail",
+          "password": "Mot de passe"
+        }
+      },
+      "select_device": {
+        "title": "Sélectionnez votre hotte",
+        "data": {
+          "device_id": "Appareil"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Ré-authentifier Elica Connect",
+        "description": "Vos identifiants Elica Connect ne sont plus valides. Saisissez-les à nouveau.",
+        "data": {
+          "email": "E-mail",
+          "password": "Mot de passe"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "E-mail ou mot de passe invalide",
+      "cannot_connect": "Impossible de se connecter au cloud Elica",
+      "no_devices": "Aucun appareil trouvé sur ce compte",
+      "unknown": "Erreur inattendue"
+    },
+    "abort": {
+      "already_configured": "Cette hotte est déjà configurée",
+      "reauth_successful": "Ré-authentification réussie"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Codes de capability avancés",
+        "description": "Chaque fonction ci-dessous est désactivée par défaut (0) car les codes de capability varient selon le modèle. Saisissez le code découvert sur votre hotte (voir DISCOVERY.md) pour activer une fonction ; remettez 0 pour la retirer.",
+        "data": {
+          "cap_air_quality": "Code de capability du capteur de qualité de l'air",
+          "fan_auto_value": "Valeur du mode AUTO (capability 64)",
+          "cap_light_color": "Code de capability de la couleur de l'éclairage",
+          "cap_ambient_brightness": "Code de capability de la luminosité de l'éclairage d'ambiance",
+          "cap_ambient_color": "Code de capability de la couleur de l'éclairage d'ambiance",
+          "keepalive_minutes": "Intervalle de keep-alive (minutes)",
+          "aggressive_keepalive": "Keep-alive agressif (envoyer une commande no-op)",
+          "cap_timer": "Code de capability de la minuterie d'arrêt",
+          "mqtt_host": "Hôte du broker MQTT",
+          "mqtt_port": "Port du broker MQTT"
+        },
+        "data_description": {
+          "cap_air_quality": "0 = pas de capteur de qualité de l'air. Code 112 sur Elica Illusion (dataModelIdx 8).",
+          "fan_auto_value": "0 = pas de préréglage Auto. Valeur 16 sur Elica Illusion (dataModelIdx 8).",
+          "cap_light_color": "0 = éclairage principal sans contrôle de couleur. Code 97 sur Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_brightness": "0 = votre hotte n'a pas d'éclairage d'ambiance, l'entité n'est pas créée. Code 100 sur Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_color": "0 = éclairage d'ambiance uniquement variateur (p. ex. Elica Illusion). À définir seulement si l'éclairage d'ambiance a un curseur chaud/froid dans l'application.",
+          "keepalive_minutes": "Fréquence d'interrogation du cloud Elica pendant que le push MQTT est actif. Par défaut 5. Diminuez (1-2) si la hotte se déconnecte du Wi-Fi à cause de la gestion d'énergie ; augmentez pour réduire le trafic cloud.",
+          "aggressive_keepalive": "À chaque cycle de keep-alive, envoie aussi une commande inoffensive (écho de la luminosité actuelle de l'éclairage) qui force la hotte elle-même à se réveiller et à répondre via MQTT. À activer seulement si la hotte se déconnecte du Wi-Fi malgré un intervalle court.",
+          "cap_timer": "0 = pas de minuterie. Code 432 sur Elica Illusion (dataModelIdx 8).",
+          "mqtt_host": "Broker MQTT cloud d'Elica. À changer uniquement si Elica le déplace ; par défaut cloudprodmqtt.elica.com.",
+          "mqtt_port": "Par défaut 8883 (TLS)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "fan": {
+      "fan": {
+        "name": "Ventilateur",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "auto": "Auto",
+              "low": "Basse",
+              "medium": "Moyenne",
+              "high": "Haute",
+              "boost": "Boost"
+            }
+          }
+        }
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Éclairage",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "very_warm": "Très chaude",
+              "warm": "Chaude",
+              "neutral": "Neutre",
+              "cool": "Froide",
+              "very_cool": "Très froide"
+            }
+          }
+        }
+      },
+      "ambient_light": {
+        "name": "Éclairage d'ambiance"
+      }
+    },
+    "sensor": {
+      "filter": {
+        "name": "Filtre"
+      },
+      "air_quality": {
+        "name": "Qualité de l'air",
+        "state": {
+          "excellent": "Excellente",
+          "good": "Bonne",
+          "fair": "Moyenne",
+          "poor": "Mauvaise",
+          "very_poor": "Très mauvaise"
+        }
+      }
+    },
+    "number": {
+      "timer": {
+        "name": "Minuterie"
+      }
+    }
+  }
+}

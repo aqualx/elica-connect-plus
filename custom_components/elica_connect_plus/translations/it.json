@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Account Elica Connect",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      },
+      "select_device": {
+        "title": "Seleziona la tua cappa",
+        "data": {
+          "device_id": "Dispositivo"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Riautentica Elica Connect",
+        "description": "Le credenziali Elica Connect non sono più valide. Inseriscile di nuovo.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Email o password non validi",
+      "cannot_connect": "Impossibile connettersi al cloud Elica",
+      "no_devices": "Nessun dispositivo trovato su questo account",
+      "unknown": "Errore imprevisto"
+    },
+    "abort": {
+      "already_configured": "Questa cappa è già configurata",
+      "reauth_successful": "Riautenticazione completata"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Codici capability avanzati",
+        "description": "Ogni funzione qui sotto è disattivata di default (0) perché i codici capability variano per modello. Inserisci il codice scoperto sulla tua cappa (vedi DISCOVERY.md) per attivare una funzione; rimetti 0 per rimuoverla.",
+        "data": {
+          "cap_air_quality": "Codice capability sensore qualità aria",
+          "fan_auto_value": "Valore modalità AUTO (capability 64)",
+          "cap_light_color": "Codice capability colore luce",
+          "cap_ambient_brightness": "Codice capability luminosità luce ambiente",
+          "cap_ambient_color": "Codice capability colore luce ambiente",
+          "keepalive_minutes": "Intervallo keep-alive (minuti)",
+          "aggressive_keepalive": "Keep-alive aggressivo (invia comando no-op)",
+          "cap_timer": "Codice capability timer di spegnimento",
+          "mqtt_host": "Host broker MQTT",
+          "mqtt_port": "Porta broker MQTT"
+        },
+        "data_description": {
+          "cap_air_quality": "0 = nessun sensore qualità aria. Codice 112 su Elica Illusion (dataModelIdx 8).",
+          "fan_auto_value": "0 = nessun preset Auto. Valore 16 su Elica Illusion (dataModelIdx 8).",
+          "cap_light_color": "0 = luce principale senza controllo colore. Codice 97 su Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_brightness": "0 = la tua cappa non ha la luce ambiente, l'entità non viene creata. Codice 100 su Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_color": "0 = luce ambiente solo dimmer (es. Elica Illusion). Impostare solo se la luce ambiente ha lo slider caldo/freddo nell'app.",
+          "keepalive_minutes": "Frequenza di interrogazione del cloud Elica mentre il push MQTT è attivo. Default 5. Abbassalo (1-2) se la cappa si scollega dal Wi-Fi per il power management; alzalo per ridurre il traffico cloud.",
+          "aggressive_keepalive": "Ad ogni ciclo di keep-alive invia anche un comando innocuo (eco della luminosità luce corrente) che obbliga la cappa stessa a svegliarsi e rispondere via MQTT. Attivare solo se la cappa si scollega dal Wi-Fi nonostante un intervallo di poll breve.",
+          "cap_timer": "0 = nessun timer. Codice 432 su Elica Illusion (dataModelIdx 8).",
+          "mqtt_host": "Broker MQTT cloud di Elica. Cambialo solo se Elica lo sposta; default cloudprodmqtt.elica.com.",
+          "mqtt_port": "Default 8883 (TLS)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "fan": {
+      "fan": {
+        "name": "Ventola",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "auto": "Auto",
+              "low": "Bassa",
+              "medium": "Media",
+              "high": "Alta",
+              "boost": "Boost"
+            }
+          }
+        }
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Luce",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "very_warm": "Molto calda",
+              "warm": "Calda",
+              "neutral": "Neutra",
+              "cool": "Fredda",
+              "very_cool": "Molto fredda"
+            }
+          }
+        }
+      },
+      "ambient_light": {
+        "name": "Luce ambiente"
+      }
+    },
+    "sensor": {
+      "filter": {
+        "name": "Filtro"
+      },
+      "air_quality": {
+        "name": "Qualità aria",
+        "state": {
+          "excellent": "Ottima",
+          "good": "Buona",
+          "fair": "Media",
+          "poor": "Scarsa",
+          "very_poor": "Pessima"
+        }
+      }
+    },
+    "number": {
+      "timer": {
+        "name": "Timer"
+      }
+    }
+  }
+}

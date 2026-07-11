@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elica Connect account",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      },
+      "select_device": {
+        "title": "Select your hood",
+        "data": {
+          "device_id": "Device"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Elica Connect",
+        "description": "Your Elica Connect credentials are no longer valid. Enter them again.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid email or password",
+      "cannot_connect": "Cannot connect to Elica cloud",
+      "no_devices": "No devices found on this account",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This hood is already configured",
+      "reauth_successful": "Re-authentication was successful"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Advanced capability codes",
+        "description": "Each feature below is disabled by default (0) because capability codes vary by hood model. Enter the code discovered on your hood (see DISCOVERY.md) to enable a feature; set it back to 0 to remove it.",
+        "data": {
+          "cap_air_quality": "Air quality sensor capability code",
+          "fan_auto_value": "Fan mode value for AUTO (capability 64)",
+          "cap_light_color": "Light color capability code",
+          "cap_ambient_brightness": "Ambient light brightness capability code",
+          "cap_ambient_color": "Ambient light color capability code",
+          "keepalive_minutes": "Keep-alive poll interval (minutes)",
+          "aggressive_keepalive": "Aggressive keep-alive (send no-op command)",
+          "cap_timer": "Auto-off timer capability code",
+          "mqtt_host": "MQTT broker host",
+          "mqtt_port": "MQTT broker port"
+        },
+        "data_description": {
+          "cap_air_quality": "0 = no air quality sensor. Code 112 on Elica Illusion (dataModelIdx 8).",
+          "fan_auto_value": "0 = no Auto preset. Value 16 on Elica Illusion (dataModelIdx 8).",
+          "cap_light_color": "0 = main light without color control. Code 97 on Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_brightness": "0 = your hood has no ambient light, the entity is not created. Code 100 on Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_color": "0 = ambient light dimmer-only (e.g. Elica Illusion). Set only if your ambient light has a warm/cold slider in the app.",
+          "keepalive_minutes": "How often to poll the Elica cloud while MQTT push is active. Default 5. Lower it (1-2) if your hood drops off Wi-Fi due to power management; raise it to reduce cloud traffic.",
+          "aggressive_keepalive": "On every keep-alive cycle, also send a harmless command (echo of the current light brightness) that forces the hood itself to wake up and acknowledge over MQTT. Enable only if the hood still drops off Wi-Fi with a short poll interval.",
+          "cap_timer": "0 = no timer. Code 432 on Elica Illusion (dataModelIdx 8).",
+          "mqtt_host": "Elica cloud MQTT broker. Change only if Elica moves it; default cloudprodmqtt.elica.com.",
+          "mqtt_port": "Default 8883 (TLS)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "fan": {
+      "fan": {
+        "name": "Fan",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "auto": "Auto",
+              "low": "Low",
+              "medium": "Medium",
+              "high": "High",
+              "boost": "Boost"
+            }
+          }
+        }
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Light",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "very_warm": "Very warm",
+              "warm": "Warm",
+              "neutral": "Neutral",
+              "cool": "Cool",
+              "very_cool": "Very cool"
+            }
+          }
+        }
+      },
+      "ambient_light": {
+        "name": "Ambient light"
+      }
+    },
+    "sensor": {
+      "filter": {
+        "name": "Filter"
+      },
+      "air_quality": {
+        "name": "Air quality",
+        "state": {
+          "excellent": "Excellent",
+          "good": "Good",
+          "fair": "Fair",
+          "poor": "Poor",
+          "very_poor": "Very poor"
+        }
+      }
+    },
+    "number": {
+      "timer": {
+        "name": "Timer"
+      }
+    }
+  }
+}

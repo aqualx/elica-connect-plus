@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Cuenta Elica Connect",
+        "data": {
+          "email": "Correo electrónico",
+          "password": "Contraseña"
+        }
+      },
+      "select_device": {
+        "title": "Selecciona tu campana",
+        "data": {
+          "device_id": "Dispositivo"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Volver a autenticar Elica Connect",
+        "description": "Tus credenciales de Elica Connect ya no son válidas. Introdúcelas de nuevo.",
+        "data": {
+          "email": "Correo electrónico",
+          "password": "Contraseña"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Correo o contraseña no válidos",
+      "cannot_connect": "No se puede conectar con la nube de Elica",
+      "no_devices": "No se han encontrado dispositivos en esta cuenta",
+      "unknown": "Error inesperado"
+    },
+    "abort": {
+      "already_configured": "Esta campana ya está configurada",
+      "reauth_successful": "Reautenticación completada"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Códigos de capability avanzados",
+        "description": "Cada función está desactivada por defecto (0) porque los códigos de capability varían según el modelo. Introduce el código descubierto en tu campana (ver DISCOVERY.md) para activar una función; vuelve a ponerlo a 0 para eliminarla.",
+        "data": {
+          "cap_air_quality": "Código de capability del sensor de calidad del aire",
+          "fan_auto_value": "Valor del modo AUTO (capability 64)",
+          "cap_light_color": "Código de capability del color de la luz",
+          "cap_ambient_brightness": "Código de capability del brillo de la luz ambiental",
+          "cap_ambient_color": "Código de capability del color de la luz ambiental",
+          "keepalive_minutes": "Intervalo de keep-alive (minutos)",
+          "aggressive_keepalive": "Keep-alive agresivo (enviar comando no-op)",
+          "cap_timer": "Código de capability del temporizador de apagado",
+          "mqtt_host": "Host del broker MQTT",
+          "mqtt_port": "Puerto del broker MQTT"
+        },
+        "data_description": {
+          "cap_air_quality": "0 = sin sensor de calidad del aire. Código 112 en Elica Illusion (dataModelIdx 8).",
+          "fan_auto_value": "0 = sin preset Auto. Valor 16 en Elica Illusion (dataModelIdx 8).",
+          "cap_light_color": "0 = luz principal sin control de color. Código 97 en Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_brightness": "0 = tu campana no tiene luz ambiental, la entidad no se crea. Código 100 en Elica Illusion (dataModelIdx 8).",
+          "cap_ambient_color": "0 = luz ambiental solo regulable (p. ej. Elica Illusion). Configurar solo si la luz ambiental tiene un deslizador cálido/frío en la app.",
+          "keepalive_minutes": "Frecuencia de consulta a la nube de Elica mientras el push MQTT está activo. Por defecto 5. Redúcelo (1-2) si la campana se desconecta del Wi-Fi por el ahorro de energía; auméntalo para reducir el tráfico a la nube.",
+          "aggressive_keepalive": "En cada ciclo de keep-alive envía también un comando inocuo (eco del brillo actual de la luz) que obliga a la campana a despertarse y confirmar por MQTT. Actívalo solo si la campana sigue desconectándose del Wi-Fi pese a un intervalo de consulta corto.",
+          "cap_timer": "0 = sin temporizador. Código 432 en Elica Illusion (dataModelIdx 8).",
+          "mqtt_host": "Broker MQTT en la nube de Elica. Cámbialo solo si Elica lo traslada; por defecto cloudprodmqtt.elica.com.",
+          "mqtt_port": "Por defecto 8883 (TLS)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "fan": {
+      "fan": {
+        "name": "Ventilador",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "auto": "Auto",
+              "low": "Baja",
+              "medium": "Media",
+              "high": "Alta",
+              "boost": "Boost"
+            }
+          }
+        }
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Luz",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "very_warm": "Muy cálida",
+              "warm": "Cálida",
+              "neutral": "Neutra",
+              "cool": "Fría",
+              "very_cool": "Muy fría"
+            }
+          }
+        }
+      },
+      "ambient_light": {
+        "name": "Luz ambiental"
+      }
+    },
+    "sensor": {
+      "filter": {
+        "name": "Filtro"
+      },
+      "air_quality": {
+        "name": "Calidad del aire",
+        "state": {
+          "excellent": "Excelente",
+          "good": "Buena",
+          "fair": "Regular",
+          "poor": "Mala",
+          "very_poor": "Muy mala"
+        }
+      }
+    },
+    "number": {
+      "timer": {
+        "name": "Temporizador"
+      }
+    }
+  }
+}

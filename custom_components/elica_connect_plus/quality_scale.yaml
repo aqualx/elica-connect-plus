@@ -1,0 +1,53 @@
+# Integration Quality Scale — self assessment
+# https://developers.home-assistant.io/docs/core/integration-quality-scale/
+rules:
+  # Bronze
+  action-setup: exempt          # no custom service actions
+  appropriate-polling: done      # 30 s bootstrap, 300 s once MQTT push is up
+  brands: todo                   # requires PR to home-assistant/brands
+  common-modules: done           # coordinator.py holds API + coordinator
+  config-flow: done
+  config-flow-test-coverage: done
+  dependency-transparency: done  # paho-mqtt declared in manifest
+  docs-actions: exempt
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: todo
+  entity-event-setup: done
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure: done    # login validated in config flow
+  test-before-setup: done        # login validated in async_setup_entry
+  unique-config-entry: done      # unique_id = device_id, duplicates aborted
+
+  # Silver
+  action-exceptions: done        # optimistic state reverted, exception re-raised
+  config-entry-unloading: done   # MQTT loop stopped on unload
+  docs-configuration-parameters: exempt  # no options flow
+  docs-installation-parameters: done
+  entity-unavailable: done       # CoordinatorEntity + filter data check
+  integration-owner: todo        # codeowners empty in manifest
+  log-when-unavailable: done     # via DataUpdateCoordinator
+  parallel-updates: todo
+  reauthentication-flow: done
+  test-coverage: todo            # partial: config flow, API, fan
+
+  # Gold
+  devices: done
+  diagnostics: done
+  discovery: exempt              # cloud-only, no local discovery protocol
+  dynamic-devices: todo          # one hood per entry by design
+  entity-category: todo          # filter sensor could be DIAGNOSTIC
+  entity-device-class: todo
+  entity-translations: todo
+  exception-translations: todo
+  icon-translations: todo
+  reconfiguration-flow: todo
+  repair-issues: exempt
+  stale-devices: exempt
+
+  # Platinum
+  async-dependency: todo         # paho-mqtt is sync (own network thread)
+  inject-websession: done
+  strict-typing: todo
