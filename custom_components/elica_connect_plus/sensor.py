@@ -1,4 +1,4 @@
-"""Sensor platform for Elica Connect (filter efficiency)."""
+"""Sensor platform for Elica Connect (filter + optional diagnostics)."""
 from __future__ import annotations
 
 from homeassistant.components.sensor import (
@@ -11,7 +11,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, MANUFACTURER, OPT_CAP_AIR_QUALITY, AIR_QUALITY_LEVELS
+from .const import (
+    DOMAIN,
+    MANUFACTURER,
+    OPT_CAP_AIR_QUALITY,
+    AIR_QUALITY_LEVELS,
+)
 from .coordinator import ElicaConnectCoordinator
 
 
@@ -21,11 +26,12 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     coordinator: ElicaConnectCoordinator = entry.runtime_data
-    entities: list[SensorEntity] = [ElicaFilterSensor(coordinator, entry)]
+    entities: list[SensorEntity] = [
+        ElicaFilterSensor(coordinator, entry),
+    ]
     if entry.options.get(OPT_CAP_AIR_QUALITY, 0):
         entities.append(ElicaAirQualitySensor(coordinator, entry))
     async_add_entities(entities)
-
 
 class ElicaFilterSensor(CoordinatorEntity, SensorEntity):
     """Filter efficiency sensor — 100% = clean, lower = needs cleaning.

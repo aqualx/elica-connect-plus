@@ -121,6 +121,16 @@
       "timer": {
         "name": "Timer"
       }
+    },
+    "switch": {
+      "debug_logging": {
+        "name": "Log di debug"
+      }
+    },
+    "text": {
+      "latest_raw_mqtt_payload": {
+        "name": "Ultimo payload MQTT grezzo"
+      }
     }
   }
 }
