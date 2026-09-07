@@ -121,6 +121,16 @@
       "timer": {
         "name": "Temporizador"
       }
+    },
+    "switch": {
+      "debug_logging": {
+        "name": "Registro de depuración"
+      }
+    },
+    "text": {
+      "latest_raw_mqtt_payload": {
+        "name": "Última carga MQTT sin procesar"
+      }
     }
   }
 }

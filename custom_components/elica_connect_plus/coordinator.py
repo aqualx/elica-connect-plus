@@ -1,6 +1,7 @@
 """DataUpdateCoordinator for Elica Connect."""
 from __future__ import annotations
 
+import asyncio
 import base64
 import json
 import logging
@@ -16,7 +17,9 @@ except ImportError:  # pragma: no cover
     mqtt = None
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 from homeassistant.util.ssl import client_context
 
 from .const import (
@@ -43,7 +46,6 @@ _LOGGER = logging.getLogger(__name__)
 # Refresh the token this many seconds before its JWT `exp` claim.
 TOKEN_EXPIRY_MARGIN = 120
 
-
 def _decode_jwt(token: str) -> dict:
     """Decode JWT payload (no signature verification)."""
     payload = token.split(".")[1]
@@ -63,6 +65,34 @@ def _make_mqtt_client(client_id: str):
     except AttributeError:
         # paho-mqtt < 2.0
         return mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv311)
+
+
+def _mqtt_payload_text(payload: bytes | bytearray | str) -> str:
+    """Return MQTT payload as displayable text for UI debug logging."""
+    if isinstance(payload, str):
+        return payload
+    return bytes(payload).decode("utf-8", errors="replace")
+
+
+def _mqtt_data_model(payload: Any) -> dict | None:
+    """Extract a dataModel object from known Elica MQTT payload shapes."""
+    if isinstance(payload, dict):
+        data_model = payload.get("dataModel")
+        return data_model if isinstance(data_model, dict) else None
+    if isinstance(payload, list):
+        for item in payload:
+            data_model = _mqtt_data_model(item)
+            if data_model is not None:
+                return data_model
+    return None
+
+
+def _is_running_in_loop(loop: asyncio.AbstractEventLoop) -> bool:
+    """Return whether the current code is running on the given event loop."""
+    try:
+        return asyncio.get_running_loop() is loop
+    except RuntimeError:
+        return False
 
 
 class InvalidAuth(Exception):
@@ -228,6 +258,10 @@ class ElicaConnectCoordinator(DataUpdateCoordinator):
         # Set when the broker rejects our (expired) credentials; the next
         # REST poll refreshes the token and pushes new credentials to paho.
         self._mqtt_needs_reauth = False
+        self._debug_ui_enabled = False
+        self._latest_raw_mqtt_payload: str | None = None
+        self._latest_raw_mqtt_timestamp: str | None = None
+        self._debug_signal = f"{DOMAIN}_debug_updated_{entry.entry_id}"
 
     @property
     def device_raw(self) -> dict:
@@ -237,6 +271,56 @@ class ElicaConnectCoordinator(DataUpdateCoordinator):
     def mqtt_active(self) -> bool:
         """Whether the MQTT push client has been started."""
         return self._mqtt_client is not None
+
+    @property
+    def debug_signal(self) -> str:
+        """Dispatcher signal for UI debug log updates."""
+        return self._debug_signal
+
+    @property
+    def debug_ui_enabled(self) -> bool:
+        """Whether UI debug logging is enabled."""
+        return self._debug_ui_enabled
+
+    @property
+    def latest_raw_mqtt_payload(self) -> str | None:
+        """Return the latest raw MQTT payload captured while debugging is enabled."""
+        return self._latest_raw_mqtt_payload
+
+    @property
+    def latest_raw_mqtt_timestamp(self) -> str | None:
+        """Return the timestamp for the latest captured raw MQTT payload."""
+        return self._latest_raw_mqtt_timestamp
+
+    def set_debug_ui_enabled(self, enabled: bool) -> None:
+        """Enable/disable UI debug logging from the switch entity."""
+        enabled = bool(enabled)
+        if self._debug_ui_enabled == enabled:
+            return
+        self._debug_ui_enabled = enabled
+        if not _is_running_in_loop(self.hass.loop):
+            self.hass.loop.call_soon_threadsafe(
+                async_dispatcher_send, self.hass, self._debug_signal
+            )
+            return
+        async_dispatcher_send(self.hass, self._debug_signal)
+
+    def update_latest_raw_mqtt_payload(self, payload: str) -> None:
+        """Capture the latest raw MQTT payload when UI debugging is enabled."""
+        if not self._debug_ui_enabled:
+            return
+        if not _is_running_in_loop(self.hass.loop):
+            self.hass.loop.call_soon_threadsafe(
+                self._update_latest_raw_mqtt_payload_on_loop, payload
+            )
+            return
+        self._update_latest_raw_mqtt_payload_on_loop(payload)
+
+    def _update_latest_raw_mqtt_payload_on_loop(self, payload: str) -> None:
+        """Update raw MQTT payload state from the Home Assistant event loop."""
+        self._latest_raw_mqtt_payload = payload
+        self._latest_raw_mqtt_timestamp = dt_util.utcnow().isoformat()
+        async_dispatcher_send(self.hass, self._debug_signal)
 
     async def _async_update_data(self) -> dict:
         """Fetch device state from REST API (fallback/sanity check)."""
@@ -355,10 +439,15 @@ class ElicaConnectCoordinator(DataUpdateCoordinator):
             _LOGGER.debug("Elica MQTT: disconnected rc=%s", rc)
 
         def on_message(client, userdata, msg):
+            raw_payload = _mqtt_payload_text(msg.payload)
+            self.update_latest_raw_mqtt_payload(raw_payload)
             try:
-                payload = json.loads(msg.payload)
-                # Payload: [{"dataModel": {"64": 1, "110": 0, ...}}]
-                data_model = payload[0]["dataModel"]
+                payload = json.loads(raw_payload)
+                # State payload: [{"dataModel": {"64": 1, "110": 0, ...}}]
+                data_model = _mqtt_data_model(payload)
+                if data_model is None:
+                    _LOGGER.debug("Elica MQTT: message without dataModel: %s", payload)
+                    return
                 self._state_cache.update({int(k): v for k, v in data_model.items()})
                 new_data = dict(self._state_cache)
                 # Push update to HA entities from the MQTT thread
