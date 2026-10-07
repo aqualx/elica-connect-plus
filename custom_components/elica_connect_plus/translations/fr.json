@@ -121,6 +121,16 @@
       "timer": {
         "name": "Minuterie"
       }
+    },
+    "switch": {
+      "debug_logging": {
+        "name": "Journalisation de débogage"
+      }
+    },
+    "text": {
+      "latest_raw_mqtt_payload": {
+        "name": "Dernière charge MQTT brute"
+      }
     }
   }
 }

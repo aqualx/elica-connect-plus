@@ -32,7 +32,14 @@ from .coordinator import ElicaConnectAPI, ElicaConnectCoordinator, InvalidAuth
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.FAN, Platform.LIGHT, Platform.NUMBER, Platform.SENSOR]
+PLATFORMS = [
+    Platform.FAN,
+    Platform.LIGHT,
+    Platform.NUMBER,
+    Platform.SENSOR,
+    Platform.SWITCH,
+    Platform.TEXT,
+]
 
 type ElicaConfigEntry = ConfigEntry[ElicaConnectCoordinator]
 

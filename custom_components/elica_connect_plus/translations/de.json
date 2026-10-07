@@ -121,6 +121,16 @@
       "timer": {
         "name": "Timer"
       }
+    },
+    "switch": {
+      "debug_logging": {
+        "name": "Debug-Protokollierung"
+      }
+    },
+    "text": {
+      "latest_raw_mqtt_payload": {
+        "name": "Letzte rohe MQTT-Nutzlast"
+      }
     }
   }
 }
